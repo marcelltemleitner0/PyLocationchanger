@@ -8,6 +8,7 @@
 
 - Python 3.11 or higher
 - MacOS
+
 `While it may work on Linux or Windows, additional setup is required and functionality may be limited.`
 > For details and guidance, please refer to [pymobiledevice3](https://github.com/doronz88/pymobiledevice3).
 ---
