@@ -167,6 +167,20 @@ async def get_rsd_for_device(udid: str):
             'error': f'No active tunnel for device {udid}'
         })
 
+@router.get("/developerstatus")
+async def get_developer_status():
+    try:
+        connected_devices = DeviceService.list_connected_devices()
+        udid = next(iter(connected_devices))
+
+        status = DeviceService.check_developer_status(udid)
+        return JSONResponse(content={
+            "udid" : udid,
+            "developer_status": status
+        })
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
 def cleanup_resources():
     for udid, manager in location_managers.items():
         try:

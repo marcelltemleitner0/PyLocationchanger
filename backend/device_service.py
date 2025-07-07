@@ -38,3 +38,16 @@ class DeviceService:
             raise ValueError(f"Device {udid} not found")
 
         return devices[udid]
+    
+    @staticmethod
+    def check_developer_status(udid):
+        """
+        Check the developer status on device
+        """
+        lockdown = create_using_usbmux(
+                udid,
+                connection_type= "Network",
+                autopair=True
+            )
+        return lockdown.developer_mode_status
+        
