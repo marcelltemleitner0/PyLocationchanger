@@ -167,6 +167,38 @@ async def get_rsd_for_device(udid: str):
             'error': f'No active tunnel for device {udid}'
         })
 
+@router.get("/developerstatus")
+async def get_developer_status():
+    try:
+        connected_devices = DeviceService.list_connected_devices()
+        udid = next(iter(connected_devices))
+
+        status = DeviceService.check_developer_status(udid)
+        return JSONResponse(content={
+            "udid" : udid,
+            "developer_status": status
+        })
+    except Exception as e:
+        return JSONResponse(content={"No device(s) connected": str(e)}, status_code=404)
+
+@router.post("/enabledevstatus")
+async def enable_developer_status(data: WiFiConnectionData):
+    try:
+        udid = data.udid
+        current_status = DeviceService.check_developer_status(udid)
+        if current_status:
+             return JSONResponse(content={
+                "udid": udid,
+                "developer_status": current_status,
+                "message": "Developer status is already enabled for this device."
+            })
+
+        result = DeviceService.enable_developer_status(udid)
+        return {"status": "success", "message": result}
+    except Exception as e:
+        return JSONResponse(content={"No device(s) connected": str(e)}, status_code=404)
+
+
 def cleanup_resources():
     for udid, manager in location_managers.items():
         try:

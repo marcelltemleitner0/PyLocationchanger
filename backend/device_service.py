@@ -1,5 +1,6 @@
 from pymobiledevice3.usbmux import list_devices
 from pymobiledevice3.lockdown import create_using_usbmux
+from pymobiledevice3.services.amfi import AmfiService
 
 
 class DeviceService:
@@ -38,3 +39,27 @@ class DeviceService:
             raise ValueError(f"Device {udid} not found")
 
         return devices[udid]
+    
+    @staticmethod
+    def check_developer_status(udid):
+        """
+        Check the developer status on device
+        """
+        lockdown = create_using_usbmux(
+                udid,
+                connection_type= "Network",
+                autopair=True
+            )
+        return lockdown.developer_mode_status
+
+    @staticmethod
+    def enable_developer_status(udid):
+        """
+        Enables the developer mode on device
+        """
+        lockdown = create_using_usbmux(
+                udid,
+                connection_type= "USB",
+                autopair=True
+            )
+        AmfiService(lockdown).enable_developer_mode()
