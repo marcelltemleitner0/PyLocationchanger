@@ -179,7 +179,25 @@ async def get_developer_status():
             "developer_status": status
         })
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        return JSONResponse(content={"No device(s) connected": str(e)}, status_code=404)
+
+@router.post("/enabledevstatus")
+async def enable_developer_status(data: WiFiConnectionData):
+    try:
+        udid = data.udid
+        current_status = DeviceService.check_developer_status(udid)
+        if current_status:
+             return JSONResponse(content={
+                "udid": udid,
+                "developer_status": current_status,
+                "message": "Developer status is already enabled for this device."
+            })
+
+        result = DeviceService.enable_developer_status(udid)
+        return {"status": "success", "message": result}
+    except Exception as e:
+        return JSONResponse(content={"No device(s) connected": str(e)}, status_code=404)
+
 
 def cleanup_resources():
     for udid, manager in location_managers.items():
